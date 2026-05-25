@@ -3,7 +3,6 @@ CREATE TABLE users (
   email TEXT UNIQUE NOT NULL,
   name TEXT,
   avatar_url TEXT,
-  google_id TEXT UNIQUE NOT NULL,
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
