@@ -3,31 +3,39 @@ import os
 
 from email.message import EmailMessage
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
 EMAIL_USER = os.getenv("EMAIL_USER")
 EMAIL_PASS = os.getenv("EMAIL_PASS")
 
+
 def send_email(to, subject, body):
 
-    msg = EmailMessage()
+    try:
 
-    msg["Subject"] = subject
-    msg["From"] = EMAIL_USER
-    msg["To"] = to
+        msg = EmailMessage()
 
-    msg.set_content(body)
+        msg["Subject"] = subject
+        msg["From"] = EMAIL_USER
+        msg["To"] = to
 
-    with smtplib.SMTP_SSL(
-        "smtp.gmail.com",
-        465
-    ) as smtp:
+        msg.set_content(body)
 
-        smtp.login(
+        server = smtplib.SMTP(
+            "smtp.gmail.com",
+            587
+        )
+
+        server.starttls()
+
+        server.login(
             EMAIL_USER,
             EMAIL_PASS
         )
 
-        smtp.send_message(msg)
+        server.send_message(msg)
+
+        server.quit()
+
+        print("EMAIL SENT")
+
+    except Exception as e:
+        print("EMAIL ERROR:", e)
