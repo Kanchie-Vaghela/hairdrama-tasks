@@ -18,3 +18,11 @@ def save_user():
         "message": "User saved",
         "data": response.data
     }
+
+@users_bp.route("/users", methods=["GET"])
+def get_users():
+    response = supabase.table("users").select("*").execute()
+
+    return {
+        "data": response.data
+    }
