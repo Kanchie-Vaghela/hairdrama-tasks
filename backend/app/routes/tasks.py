@@ -1,5 +1,6 @@
 from flask import Blueprint, request
 from app.config import supabase
+from app.services.email_service import send_email
 
 tasks_bp = Blueprint("tasks", __name__)
 
@@ -13,6 +14,7 @@ def get_tasks():
 
 @tasks_bp.route("/tasks", methods=["POST"])
 def create_task():
+
     data = request.json
 
     response = supabase.table("tasks").insert({
@@ -21,6 +23,27 @@ def create_task():
         "created_by": data["created_by"],
         "assigned_to": data["assigned_to"]
     }).execute()
+
+    assigned_user = supabase.table("users").select(
+        "*"
+    ).eq(
+        "id",
+        data["assigned_to"]
+    ).single().execute()
+
+    send_email(
+        assigned_user.data["email"],
+        "New Task Assigned",
+        f"""
+You have been assigned a new task.
+
+Title:
+{data["title"]}
+
+Description:
+{data["description"]}
+"""
+    )
 
     return {
         "message": "Task created",
