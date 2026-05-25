@@ -53,9 +53,46 @@ Description:
 @tasks_bp.route("/tasks/<task_id>/complete", methods=["PATCH"])
 def complete_task(task_id):
 
-    response = supabase.table("tasks").update({
+    existing_task = supabase.table(
+        "tasks"
+    ).select(
+        "*"
+    ).eq(
+        "id",
+        task_id
+    ).single().execute()
+
+    response = supabase.table(
+        "tasks"
+    ).update({
         "status": "completed"
-    }).eq("id", task_id).execute()
+    }).eq(
+        "id",
+        task_id
+    ).execute()
+
+    creator = supabase.table(
+        "users"
+    ).select(
+        "*"
+    ).eq(
+        "id",
+        existing_task.data["created_by"]
+    ).single().execute()
+
+    send_email(
+        creator.data["email"],
+        "Task Completed",
+        f"""
+Your task has been completed.
+
+Title:
+{existing_task.data["title"]}
+
+Description:
+{existing_task.data["description"]}
+"""
+    )
 
     return {
         "message": "Task completed",
