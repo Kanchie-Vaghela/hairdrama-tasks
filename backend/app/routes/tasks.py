@@ -26,3 +26,15 @@ def create_task():
         "message": "Task created",
         "data": response.data
     }
+
+@tasks_bp.route("/tasks/<task_id>/complete", methods=["PATCH"])
+def complete_task(task_id):
+
+    response = supabase.table("tasks").update({
+        "status": "completed"
+    }).eq("id", task_id).execute()
+
+    return {
+        "message": "Task completed",
+        "data": response.data
+    }

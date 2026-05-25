@@ -1,10 +1,15 @@
 import { Task } from "@/types";
 
+interface Props {
+  tasks: Task[];
+  completeTask: (id: string) => void;
+}
+
 export default function TaskList({
   tasks,
-}: {
-  tasks: Task[];
-}) {
+  completeTask,
+}: Props) {
+
   return (
     <div className="bg-white p-6 rounded-xl shadow">
 
@@ -13,11 +18,14 @@ export default function TaskList({
       </h2>
 
       <div className="space-y-4">
+
         {tasks.map((task) => (
+
           <div
             key={task.id}
             className="border p-4 rounded-lg"
           >
+
             <h3 className="text-lg font-bold">
               {task.title}
             </h3>
@@ -32,9 +40,22 @@ export default function TaskList({
                 {task.status}
               </span>
             </p>
+
+            {task.status !== "completed" && (
+              <button
+                onClick={() => completeTask(task.id)}
+                className="bg-green-600 text-white px-4 py-2 rounded-lg mt-4"
+              >
+                Mark Completed
+              </button>
+            )}
+
           </div>
+
         ))}
+
       </div>
+
     </div>
   );
 }

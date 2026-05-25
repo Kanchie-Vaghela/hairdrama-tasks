@@ -33,3 +33,17 @@ export const saveUserApi = async (body: any) => {
 
   return res.json();
 };
+
+export const completeTaskApi = async (
+  taskId: string
+) => {
+
+  const res = await fetch(
+    `${BASE_URL}/tasks/${taskId}/complete`,
+    {
+      method: "PATCH",
+    }
+  );
+
+  return res.json();
+};

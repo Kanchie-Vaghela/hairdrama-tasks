@@ -16,10 +16,10 @@ import {
   fetchTasksApi,
   createTaskApi,
   saveUserApi,
+  completeTaskApi,
 } from "@/services/api";
 
 export default function Home() {
-
   const [user, setUser] = useState<any>(null);
 
   const [users, setUsers] = useState<User[]>([]);
@@ -36,7 +36,6 @@ export default function Home() {
   }, []);
 
   const getUser = async () => {
-
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -44,14 +43,12 @@ export default function Home() {
     setUser(user);
 
     if (user) {
-
       await saveUserApi({
         id: user.id,
         email: user.email,
         name: user.user_metadata.full_name,
         avatar_url: user.user_metadata.avatar_url,
       });
-
     }
   };
 
@@ -66,7 +63,6 @@ export default function Home() {
   };
 
   const createTask = async () => {
-
     if (!title || !description || !assignedTo) {
       alert("Fill all fields");
       return;
@@ -86,6 +82,12 @@ export default function Home() {
     fetchTasks();
   };
 
+  const completeTask = async (taskId: string) => {
+    await completeTaskApi(taskId);
+
+    fetchTasks();
+  };
+
   const handleLogin = async () => {
     await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -98,20 +100,13 @@ export default function Home() {
   };
 
   if (!user) {
-    return (
-      <Auth handleLogin={handleLogin} />
-    );
+    return <Auth handleLogin={handleLogin} />;
   }
 
   return (
     <div className="min-h-screen p-10 bg-gray-100">
-
       <div className="max-w-3xl mx-auto">
-
-        <UserProfile
-          user={user}
-          handleLogout={handleLogout}
-        />
+        <UserProfile user={user} handleLogout={handleLogout} />
 
         <CreateTask
           users={users}
@@ -124,12 +119,8 @@ export default function Home() {
           createTask={createTask}
         />
 
-        <TaskList
-          tasks={tasks}
-        />
-
+        <TaskList tasks={tasks} completeTask={completeTask} />
       </div>
-
     </div>
   );
 }
