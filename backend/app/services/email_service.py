@@ -19,23 +19,23 @@ def send_email(to, subject, body):
 
         msg.set_content(body)
 
-        server = smtplib.SMTP(
+        with smtplib.SMTP(
             "smtp.gmail.com",
-            587
-        )
+            587,
+            timeout=10
+        ) as server:
 
-        server.starttls()
+            server.starttls()
 
-        server.login(
-            EMAIL_USER,
-            EMAIL_PASS
-        )
+            server.login(
+                EMAIL_USER,
+                EMAIL_PASS
+            )
 
-        server.send_message(msg)
+            server.send_message(msg)
 
-        server.quit()
-
-        print("EMAIL SENT")
+        print("EMAIL SENT SUCCESSFULLY")
 
     except Exception as e:
-        print("EMAIL ERROR:", e)
+
+        print("EMAIL FAILED:", str(e))
