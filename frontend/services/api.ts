@@ -1,4 +1,4 @@
-const BASE_URL = "http://127.0.0.1:5000";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL!;
 
 export const fetchUsersApi = async () => {
   const res = await fetch(`${BASE_URL}/users`);
